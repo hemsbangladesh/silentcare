@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = ["silentcare.com",
-                 "cashbasics101-lgzne.ondigitalocean.app", "127.0.0.1"]
+                 "silent-care-m4pnd.ondigitalocean.app", "127.0.0.1"]
 
 # Application definition
 
