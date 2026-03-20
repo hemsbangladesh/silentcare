@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<p>1. <a href="{% url 'manager:manager-categories-subcategories' %}">View categories &amp; sub-categories</a></p>
+<p>2. <a href="{% url 'manager:manager-create-category' %}">Create category</a></p>
+<p>3. <a href="#">Edit category</a></p>
+<p>4. <a href="{% url 'manager:manager-create-sub-category' %}">Create sub-category</a></p>
+<p>6. <a href="#">Edit sub-category</a></p>
+
+<p>&nbsp;</p>
+
+{% endblock content %}

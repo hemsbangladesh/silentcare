@@ -1,0 +1,433 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0b1 | 201101 
+   NOTE: WORK IN PROGRESS
+   USE WITH CAUTION AND TEST WITH ABANDON */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+/*table, caption, tbody, tfoot, thead, tr, th, td,*/
+article, aside, canvas, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	outline: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+
+/* remember to define visible focus styles! 
+:focus {
+	outline: ?????;
+} */
+
+/* remember to highlight inserts somehow! */
+ins {
+	text-decoration: none;
+}
+del {
+	text-decoration: line-through;
+}
+/*
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+*/
+
+
+
+/********************************************************************************/
+
+body
+{
+	font-family:'Open Sans',sans-serif;font-size:16px;color:#333;
+	background:#222 url(images/page-bg.png);
+}
+a,a:active,a:focus,a:hover{outline:0}
+a {
+  text-decoration: none;
+}
+h1, h2, h3, h4, h5, h6
+{
+	padding:10px 0px 5px 0px; line-height:150%;
+}
+/* Start: Sub-ordered list */
+ol li
+{
+	margin-left: 20px;
+}
+ol ol li
+{
+	list-style-type: lower-alpha;
+}
+ol ol ol li
+{
+	list-style-type: lower-roman;
+}
+ol ol ol ol li
+{
+	list-style-type: lower-greek;
+}
+/* End: Sub-ordered list */
+.container-full
+{
+	margin:0px auto; padding:0px;
+}
+.container-full .content
+{
+	max-width:800px; background:#FFFFFF;
+	margin:0px; padding:0px 20px;
+}
+.container-full .content .menu
+{
+	text-align:right;
+}
+.container-full .content h1
+{
+	display: block;
+	font-size: 1.75em;
+	-webkit-margin-before: 0.4em;
+	-webkit-margin-after: 0.0em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+	font-weight: bold;
+}
+.container-full .content h2
+{
+	display: block;
+	font-size: 1.32em;
+	-webkit-margin-before: 0em;
+	-webkit-margin-after: 0.5em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+	font-weight: bold;
+}
+.container-full .content h3
+{
+	display: block;
+	font-size: 1.2em;
+	-webkit-margin-before: 0em;
+	-webkit-margin-after: 0.5em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+	font-weight: bold;
+}
+.container-full .content h4
+{
+	display: block;
+	font-size: 1.1em;
+	-webkit-margin-before: 0em;
+	-webkit-margin-after: 0.5em;
+	-webkit-margin-start: 0px;
+	-webkit-margin-end: 0px;
+	font-weight: bold;
+}
+.container-full p
+{
+	padding:6px 0px; line-height:1.5em;
+	/*text-align:center;*/
+}
+.container-full a
+{
+	color:#0176C6; display:inline;
+}
+.container-full ol
+{
+	list-style-type:decimal; padding-left:22px; line-height:1.5em;
+}
+.container-full ol li
+{
+	padding-bottom:0.5em;
+}
+.container-full ul
+{
+	list-style-type:disc; padding:15px 0px 15px 35px; line-height:1.5em;
+}
+.container-full ul li
+{
+	padding-bottom:0.5em;
+}
+.container-full strong
+{
+	font-weight:bold;
+}
+.container-full .content em
+{
+	font-style:italic;
+}
+.container-full textarea
+{
+	width:430px; height:120px;
+}
+.container-full b
+{
+	font-weight: bold;
+}
+.container-full i
+{
+	font-style: italic;
+}
+.container-full u
+{
+	text-decoration: underline;
+}
+.container-full .main-image
+{
+	width:500px; height:auto; display:inline-block;
+}
+.container-full .benefit-list
+{
+	background:#03C9A9; padding:20px 20px;
+	background:#E7FCF9; border-top:#E1E1E1 solid 1px;
+	border-bottom:#E1E1E1 solid 1px;
+}
+.container-full .benefit-list .tick-mark
+{
+	background:url(images/tick.png) left no-repeat;
+}
+.container-full .download-button
+{
+	width:340px; height:auto; display:inline-block;
+}
+.container-full .green-text
+{
+	color:#38B63C;
+}
+.container-full table tr td
+{
+	/*padding:4px 10px 4px 0px;*/
+}
+.container-full table tr td.top
+{
+	padding:4px 10px 4px 0px; vertical-align:top;
+}
+.container-full .correct
+{
+	font-weight:bold; color:#0F9D58;
+}
+.container-full .error
+{
+	font-weight:bold; color:#CC181E;
+}
+.container-full .red-text
+{
+	color:#CC181E;
+}
+.container-full .blue-text
+{
+	color:#233995;
+}
+.container-full .violet-text
+{
+	color:#7C008C;
+}
+.container-full .yes-text
+{
+	color:#0176C6;
+}
+.container-full .no-text
+{
+	color:#CC181E;
+}
+
+.container-full table.tableborder
+{
+	border: 1px solid #999;
+	border-collapse: separate;
+	border-spacing: 1px;
+}
+.container-full th
+{
+	font-weight: bold;
+	text-align: left;
+	background-color: #666;
+	color: #fff;
+	/* padding: 4px; */
+}
+
+.container-full .td
+{
+	font-weight: normal;
+	/* padding: 6px; line-height: 140%; */
+	background-color: #f3f3f3;
+}
+.container-full .td-padding-left-single
+{
+	padding-left: 1.4em; 
+}
+.container-full .td-padding-left-double
+{
+	padding-left: 2.4em; 
+}
+.container-full .alternate_color tr:nth-child(even) td
+{
+	background: #E0E0E0;
+}
+.container-full .alternate_color tr:nth-child(odd) td
+{
+	background: #FFF;
+}
+.container-full .alternate_color tr:hover td
+{
+    /*background-color:#FFCCCC;*/
+}
+.container-full .smaller-text
+{
+	font-size:14px;
+}
+.container-full .bold-text
+{
+	font-weight:bold;
+}
+.container-full .article-block
+{
+	border-bottom:#eeeeee solid 1px; padding-bottom:10px; margin-bottom:15px;
+}
+.container-full .pagination-title
+{
+	width:100%; overflow:hidden; padding:20px 0px 0px 0px; font-size:150%; line-height:1.5em;
+}
+.container-full .new-title
+{
+	width:100%;
+}
+.container-full .content-textarea
+{
+	width:100%; min-height:500px;
+}
+.container-full .comment-textarea
+{
+	width:100%; min-height:100px; border:#CCCCCC solid 1px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px; /* future proofing */
+	-khtml-border-radius: 5px; /* for old Konqueror browsers */
+}
+.container-full .textbox-ash
+{
+	width:25%; border:#CCCCCC solid 1px;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px; /* future proofing */
+	-khtml-border-radius: 3px; /* for old Konqueror browsers */
+}
+.container-full .content .ash-dropdown
+{
+    padding: 7px; width:35%;
+    border: 1px solid #e6e6e6;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+}
+.container-full .content .pink-text
+{
+	color:#ee76c1;
+}
+.container-full .important
+{
+	background: #FBE6F2;
+	border: 1px solid #D893A1;
+	color: #333;
+	margin: 10px 0 15px 0;
+	padding: 10px;
+}
+.container-full .editorial-feedback
+{
+	border:#DDDDDD solid 1px;
+	background:#F0F0F0; padding:10px;
+}
+.container-full .td-break-word
+{
+	white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+	white-space: -pre-wrap;      /* Opera 4-6 */
+	white-space: -o-pre-wrap;    /* Opera 7 */
+	white-space: pre-wrap;       /* css-3 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+	word-break: break-all;
+	white-space: normal;
+}
+.container-full .td-padding
+{
+	padding-top:5px; padding-bottom:7px;
+}
+.container-full .top-padding-20px
+{
+	padding-top:20px;
+}
+.container-full .bottom-padding-10px
+{
+	padding-bottom:10px;
+}
+.container-full .bottom-padding-20px
+{
+	padding-bottom:20px;
+}
+.container-full .comment-box
+{
+	width:100%; height:150px; padding:10px; line-height:1.5em;
+}
+.container-full .italic-text
+{
+	font-style: italic;
+}
+.container-full .analysis-notes
+{
+	border:#DDDDDD solid 1px; display: none;
+	background:#F0F0F0; padding:10px;
+}
+.container-full .show-analysis-notes
+{
+	display: block;
+}
+.container-full hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #9A9A9A;
+    margin: 1em 0;
+    padding: 0; 
+}
+
+@media screen and (min-width: 480px)
+{
+	.container-full
+	{
+		margin:0px auto; padding:0px 20px;
+	}
+	.container-full .content
+	{
+		margin:20px auto; padding:0px 30px;
+		-moz-border-radius: 10px;
+		-webkit-border-radius: 10px;
+		border-radius: 10px; /* future proofing */
+		-khtml-border-radius: 10px; /* for old Konqueror browsers */
+	}
+}
