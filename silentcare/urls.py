@@ -29,6 +29,7 @@ urlpatterns = [
 	path('', include('doner.urls')),
 	path('', include('manager.urls')),
 	path('', include('supervisor.urls')),
+	path('', include('invite.urls')),
 ]
 
 if settings.DEBUG:

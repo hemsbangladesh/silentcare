@@ -1,6 +1,7 @@
 from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from core.models import *
+from django.urls import reverse
 
 class ManagerHomePageView(TemplateView):
 	template_name = 'manager/home.html'
@@ -171,3 +172,80 @@ class ManagerCreateSubCategoryPageView(TemplateView):
 
 		context['output'] = output
 		return render(request, self.template_name, context)
+
+class ManagerEditCategoryPageView(TemplateView):
+	template_name = 'manager/edit-category.html'
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['title'] = "Edit a category"
+		context['headline'] = "Edit a category"
+		context['selected_category'] = ""
+		context['output'] = ""
+
+		counter = 0
+		output = ''
+		active_categories = Categories.objects.filter(is_active="Y").order_by("name")
+		for active_category in active_categories:
+			counter = counter + 1
+			category_id = active_category.id
+			category_name = active_category.name
+			url = reverse('manager:manager-edit-category', kwargs={'category_id': category_id})
+			output = output + '<p>{}. <a href="{}">{}</a></p>'.format(counter, url, category_name)
+
+		context['output'] = output
+
+		return context
+
+	def get(self, request, *args, **kwargs):
+		context = self.get_context_data()
+		category_id = kwargs.get('category_id')
+		category_id = int(category_id)
+		if category_id > 0:
+			category = Categories.objects.get(id=category_id)
+			context['selected_category'] = category.name
+		context['category_id'] = category_id
+		return render(request, self.template_name, context)
+
+	def post(self, request, *args, **kwargs):
+		context = self.get_context_data()
+		output = context['output']
+		category_id = kwargs.get('category_id')
+		category_id = int(category_id)
+		if category_id > 0:
+			category = Categories.objects.get(id=category_id)
+			context['selected_category'] = category.name
+		name = request.POST.get('name')
+		name = str(name).strip()
+		if not name:
+			output = output + '<div>'
+			output = output + '<div class="alert alert-danger" role="alert">'
+			output = output + '<strong>Oops!</strong> The category name is empty.'
+			output = output + '</div>'
+			output = output + '</div>'
+		else:
+			try:
+				user_id = request.user.id
+				obj = Categories.objects.get(id=category_id)
+				obj.name = name
+				obj.updated_by = user_id
+				obj.save()
+
+				context['selected_category'] = name
+
+				output = output + '<div>'
+				output = output + '<div class="alert alert-success" role="alert">'
+				output = output + '<strong>Good news!</strong> Successfully updated selected category: {}.'.format(name)
+				output = output + '</div>'
+				output = output + '</div>'
+			except Categories.DoesNotExist:
+				output = output + '<div>'
+				output = output + '<div class="alert alert-danger" role="alert">'
+				output = output + '<strong>Oops!</strong> Category with ID {} was not found.'.format(category_id)
+				output = output + '</div>'
+				output = output + '</div>'
+
+		context['category_id'] = category_id
+		context['output'] = output
+		return render(request, self.template_name, context)
+

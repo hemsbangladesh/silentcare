@@ -45,6 +45,22 @@ class SubCategories(models.Model):
         # This tells Django exactly what to name the table in MySQL
         db_table = 'sub_categories'
 
+class Invitations(models.Model):
+    user_type = models.CharField(max_length=25, blank=False, null=False)
+    email = models.EmailField(max_length=50, blank=False, null=False, unique=True)
+    secret_code = models.CharField(max_length=50, blank=False, null=False, unique=True)
+    is_active = models.CharField(
+        max_length=1, blank=False, null=False, default="Y")
+    added_by = models.IntegerField(blank=False, null=False)
+    add_time = models.DateTimeField(blank=False, null=False, auto_now_add=True)
+    updated_by = models.IntegerField(blank=False, null=False)
+    update_time = models.DateTimeField(
+        blank=False, null=False, auto_now=True)
+
+    class Meta:
+        # This tells Django exactly what to name the table in MySQL
+        db_table = 'invitations'
+
 # class Doner_Categories(models.Model):
 #     user_id = models.IntegerField(blank=False, null=False)
 #     selected_categories = models.CharField(max_length=255, blank=False, null=False)

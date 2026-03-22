@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "top-space.html" %}
+
+{{ output | safe }}
+
+<form action="" method="post">
+{% csrf_token %}
+
+<div class="input-group mb-3">
+<select name="user_type" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+  <option value="">Select a user type</option>
+  {% if user_type == "doner" %}
+  <option value="doner" selected>Doner</option>
+  {% else %}
+  <option value="doner">Doner</option>
+  {% endif %}
+  {% if user_type == "admin" %}
+  <option value="admin" selected>Admin</option>
+  {% else %}
+  <option value="admin">Admin</option>
+  {% endif %}
+</select>
+</div>
+
+
+<div class="input-group mb-3">
+<div class="input-group-prepend">
+    <span class="input-group-text">Email:</span>
+</div>
+<input type="text" name="email" class="form-control" placeholder="Type the email of the doner/admin here">
+</div>
+
+<p><button type="submit" class="btn btn-primary">Submit</button></p>
+</form>
+
+<p>&nbsp;</p>
+
+{% endblock content %}

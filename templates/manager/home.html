@@ -2,11 +2,19 @@
 
 {% block content %}
 
+<!--
 <p>1. <a href="{% url 'manager:manager-categories-subcategories' %}">View categories &amp; sub-categories</a></p>
 <p>2. <a href="{% url 'manager:manager-create-category' %}">Create category</a></p>
 <p>3. <a href="#">Edit category</a></p>
 <p>4. <a href="{% url 'manager:manager-create-sub-category' %}">Create sub-category</a></p>
 <p>6. <a href="#">Edit sub-category</a></p>
+-->
+
+<p>1. <a href="{% url 'manager:manager-categories-subcategories' %}">View categories</a></p>
+<p>2. <a href="{% url 'manager:manager-create-category' %}">Create category</a></p>
+<p>3. <a href="{% url 'manager:manager-edit-category' category_id=0 %}">Edit category</a></p>
+<p>4. <a href="{% url 'invite:invite-view-invitation-list' %}">View invitation list</a></p>
+<p>4. <a href="{% url 'invite:invite-send-invitation-to-join' %}">Send invitation to join</a></p>
 
 <p>&nbsp;</p>
 

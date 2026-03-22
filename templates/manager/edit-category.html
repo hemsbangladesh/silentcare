@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "top-space.html" %}
+
+{% if category_id <= 0 %}
+{{ output | safe }}
+{% else %}
+<form action="" method="post">
+{% csrf_token %}
+
+<div class="input-group mb-3">
+<div class="input-group-prepend">
+    <span class="input-group-text">Name:</span>
+</div>
+<input type="text" name="name" class="form-control" placeholder="Type your category name" value="{{ selected_category }}">
+</div>
+
+<p><button type="submit" class="btn btn-primary">Submit</button></p>
+</form>
+{% endif %}
+
+<p>&nbsp;</p>
+
+{% endblock content %}

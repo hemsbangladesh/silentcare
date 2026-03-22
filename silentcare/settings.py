@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'doner.apps.DonerConfig',
     'manager.apps.ManagerConfig',
     'supervisor.apps.SupervisorConfig',
+    'invite.apps.InviteConfig',
 ]
 
 MIDDLEWARE = [
@@ -153,6 +154,8 @@ MEDIA_URL = '/media/'
 # Path where media is stored
 MEDIA_ROOT = BASE_DIR / 'media'
 
+LOGIN_URL = '/accounts/login/'
 # LOGIN_REDIRECT_URL = "/"
 LOGIN_REDIRECT_URL = "redirect-after-login"
 LOGOUT_REDIRECT_URL = "/"
+
