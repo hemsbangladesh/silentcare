@@ -7,8 +7,8 @@ class CoreCategoriesPageView(TemplateView):
 	
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		context['title'] = "Categories &amp; sub-categories"
-		context['headline'] = "Categories &amp; sub-categories"
+		context['title'] = "Categories"
+		context['headline'] = "Categories"
 		context['output'] = ""
 		return context
 
