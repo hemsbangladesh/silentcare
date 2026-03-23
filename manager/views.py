@@ -2,8 +2,12 @@ from django.views.generic import TemplateView
 from django.shortcuts import render, redirect
 from core.models import *
 from django.urls import reverse
+######################### LOGIN AND USER ACCESS CHECK #########################
+from core.mixins import SuperuserRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+######################### LOGIN AND USER ACCESS CHECK #########################
 
-class ManagerHomePageView(TemplateView):
+class ManagerHomePageView(LoginRequiredMixin, SuperuserRequiredMixin, TemplateView):
 	template_name = 'manager/home.html'
 
 	def get_context_data(self, **kwargs):
@@ -17,7 +21,7 @@ class ManagerHomePageView(TemplateView):
 		context = self.get_context_data()
 		return render(request, self.template_name, context)
 
-class ManagerViewCategoriesSubcategoriesPageView(TemplateView):
+class ManagerViewCategoriesSubcategoriesPageView(LoginRequiredMixin, SuperuserRequiredMixin, TemplateView):
 	template_name = 'manager/categories-subcategories.html'
 
 	def get_context_data(self, **kwargs):
@@ -52,7 +56,7 @@ class ManagerViewCategoriesSubcategoriesPageView(TemplateView):
 		context['output'] = output
 		return render(request, self.template_name, context)
 
-class ManagerCreateCategoryPageView(TemplateView):
+class ManagerCreateCategoryPageView(LoginRequiredMixin, SuperuserRequiredMixin, TemplateView):
 	template_name = 'manager/create-category.html'
 
 	def get_context_data(self, **kwargs):
@@ -104,7 +108,7 @@ class ManagerCreateCategoryPageView(TemplateView):
 		context['output'] = output
 		return render(request, self.template_name, context)
 
-class ManagerCreateSubCategoryPageView(TemplateView):
+class ManagerCreateSubCategoryPageView(LoginRequiredMixin, SuperuserRequiredMixin, TemplateView):
 	template_name = 'manager/create-sub-category.html'
 
 	def get_context_data(self, **kwargs):
@@ -173,7 +177,7 @@ class ManagerCreateSubCategoryPageView(TemplateView):
 		context['output'] = output
 		return render(request, self.template_name, context)
 
-class ManagerEditCategoryPageView(TemplateView):
+class ManagerEditCategoryPageView(LoginRequiredMixin, SuperuserRequiredMixin, TemplateView):
 	template_name = 'manager/edit-category.html'
 
 	def get_context_data(self, **kwargs):
