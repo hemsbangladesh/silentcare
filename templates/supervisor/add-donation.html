@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "top-space.html" %}
+
+{{ output | safe }}
+
+<form action="" method="post">
+{% csrf_token %}
+
+<div class="input-group mb-3">
+<select name="user_id" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+  {{ doner_list | safe }}
+</select>
+</div>
+
+<div class="input-group mb-3">
+<select name="payment_method" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+  {{ payment_method_list | safe }}
+</select>
+</div>
+
+<div class="input-group mb-3">
+<div class="input-group-prepend">
+    <span class="input-group-text">Donation amount:</span>
+</div>
+<input type="text" id="amount" name="amount" value="{{ amount }}" class="form-control" placeholder="Type the donation amount here" autocomplete="off">
+</div>
+
+<div class="input-group mb-3">
+<div class="input-group-prepend">
+    <span class="input-group-text">Service cost:</span>
+</div>
+<input type="text" id="service_cost" name="service_cost" value="{{ service_cost }}" class="form-control" placeholder="Type the service cost here" autocomplete="off">
+</div>
+
+<div class="input-group mb-3">
+<div class="input-group-prepend">
+    <span class="input-group-text">Notes:</span>
+</div>
+<input type="text" id="notes" name="notes" value="{{ notes }}" class="form-control" placeholder="Type the notes here" autocomplete="off">
+</div>
+
+<p><button type="submit" class="btn btn-primary">Submit</button></p>
+</form>
+
+<p>&nbsp;</p>
+
+{% endblock content %}

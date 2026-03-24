@@ -29,7 +29,6 @@ class Categories(models.Model):
         # This tells Django exactly what to name the table in MySQL
         db_table = 'categories'
 
-
 class SubCategories(models.Model):
     category_id = models.IntegerField(blank=False, null=False)
     name = models.CharField(max_length=100, blank=False, null=False)
@@ -61,37 +60,71 @@ class Invitations(models.Model):
         # This tells Django exactly what to name the table in MySQL
         db_table = 'invitations'
 
-# class Doner_Categories(models.Model):
-#     user_id = models.IntegerField(blank=False, null=False)
-#     selected_categories = models.CharField(max_length=255, blank=False, null=False)
+class DonationBeneficiaries(models.Model):
+    beneficiary_name = models.CharField(max_length=100, blank=False, null=False)
+    guardian_name = models.CharField(max_length=100, blank=False, null=False)
+    address = models.CharField(max_length=255, blank=False, null=False)
+    mobile_number = models.CharField(max_length=50, blank=False, null=False)
+    is_active = models.CharField(
+        max_length=1, blank=False, null=False, default="Y")
+    added_by = models.IntegerField(blank=False, null=False)
+    add_time = models.DateTimeField(blank=False, null=False, auto_now_add=True)
+    updated_by = models.IntegerField(blank=False, null=False)
+    update_time = models.DateTimeField(
+        blank=False, null=False, auto_now=True)
+
+    class Meta:
+        # This tells Django exactly what to name the table in MySQL
+        db_table = 'beneficiaries'
+
+class DonationReceived(models.Model):
+    user_id = models.IntegerField(blank=False, null=False)
+    payment_method = models.CharField(max_length=25, blank=False, null=False)
+    amount = models.FloatField(default=0)
+    service_cost = models.FloatField(default=0)
+    notes = models.CharField(max_length=255, blank=False, null=False, default="")
+    is_active = models.CharField(
+        max_length=1, blank=False, null=False, default="Y")
+    added_by = models.IntegerField(blank=False, null=False)
+    add_time = models.DateTimeField(blank=False, null=False, auto_now_add=True)
+    updated_by = models.IntegerField(blank=False, null=False)
+    update_time = models.DateTimeField(
+        blank=False, null=False, auto_now=True)
+
+    class Meta:
+        # This tells Django exactly what to name the table in MySQL
+        db_table = 'donation_received'
+
+class CaseRecords(models.Model):
+    category_id = models.IntegerField(blank=False, null=False)
+    sub_category_id = models.IntegerField(blank=False, null=False)
+    title = models.CharField(max_length=255, blank=False, null=False)
+    description = models.TextField(blank=True, null=True)
+    is_active = models.CharField(
+        max_length=1, blank=False, null=False, default="Y")
+    added_by = models.IntegerField(blank=False, null=False)
+    add_time = models.DateTimeField(blank=False, null=False, auto_now_add=True)
+    updated_by = models.IntegerField(blank=False, null=False)
+    update_time = models.DateTimeField(
+        blank=False, null=False, auto_now=True)
+
+    class Meta:
+        # This tells Django exactly what to name the table in MySQL
+        db_table = 'case_list'
+
+# class CaseImages(models.Model):
+#     case_id = models.IntegerField(blank=False, null=False)
+#     title = models.CharField(max_length=255, blank=False, null=False)
+#     file_name = models.CharField(max_length=100, blank=False, null=False)
+    # is_active = models.CharField(
+    #     max_length=1, blank=False, null=False, default="Y")
 #     added_by = models.IntegerField(blank=False, null=False)
 #     add_time = models.DateTimeField(blank=False, null=False, auto_now_add=True)
 #     updated_by = models.IntegerField(blank=False, null=False)
 #     update_time = models.DateTimeField(
 #         blank=False, null=False, auto_now=True)
 
-
-# class Donation_Received(models.Model):
-#     user_id = models.IntegerField(blank=False, null=False)
-#     amount = models.FloatField(default=0)
-#     added_by = models.IntegerField(blank=False, null=False)
-#     add_time = models.DateTimeField(blank=False, null=False, auto_now_add=True)
-#     updated_by = models.IntegerField(blank=False, null=False)
-#     update_time = models.DateTimeField(
-#         blank=False, null=False, auto_now=True)
-
-# class Case_People(models.Model):
-#     person_name = models.CharField(max_length=100, blank=False, null=False)
-#     guardian_name = models.CharField(max_length=100, blank=False, null=False)
-#     address = models.CharField(max_length=255, blank=False, null=False)
-#     mobile_number = models.CharField(max_length=50, blank=False, null=False)
-#     added_by = models.IntegerField(blank=False, null=False)
-#     add_time = models.DateTimeField(blank=False, null=False, auto_now_add=True)
-#     updated_by = models.IntegerField(blank=False, null=False)
-#     update_time = models.DateTimeField(
-#         blank=False, null=False, auto_now=True)
-
-# class Case_Images(models.Model):
+# class CaseVideos(models.Model):
 #     case_id = models.IntegerField(blank=False, null=False)
 #     title = models.CharField(max_length=255, blank=False, null=False)
 #     file_name = models.CharField(max_length=100, blank=False, null=False)
@@ -101,25 +134,17 @@ class Invitations(models.Model):
 #     update_time = models.DateTimeField(
 #         blank=False, null=False, auto_now=True)
 
-# class Case_Videos(models.Model):
-#     case_id = models.IntegerField(blank=False, null=False)
-#     title = models.CharField(max_length=255, blank=False, null=False)
-#     file_name = models.CharField(max_length=100, blank=False, null=False)
-#     added_by = models.IntegerField(blank=False, null=False)
-#     add_time = models.DateTimeField(blank=False, null=False, auto_now_add=True)
-#     updated_by = models.IntegerField(blank=False, null=False)
-#     update_time = models.DateTimeField(
-#         blank=False, null=False, auto_now=True)
-
-# class Donation_Given(models.Model):
-#     case_id = models.IntegerField(blank=False, null=False)
-#     category_id = models.IntegerField(blank=False, null=False)
-#     sub_category_id = models.IntegerField(blank=False, null=False)
-#     title = models.CharField(max_length=255, blank=False, null=False)
-#     description = models.TextField(blank=True, null=True)
-#     amount = models.FloatField(default=0)
-#     added_by = models.IntegerField(blank=False, null=False)
-#     add_time = models.DateTimeField(blank=False, null=False, auto_now_add=True)
-#     updated_by = models.IntegerField(blank=False, null=False)
-#     update_time = models.DateTimeField(
-#         blank=False, null=False, auto_now=True)
+class DonationGiven(models.Model):
+    case_id = models.IntegerField(blank=False, null=False)
+    amount = models.FloatField(default=0)
+    is_active = models.CharField(
+        max_length=1, blank=False, null=False, default="Y")
+    added_by = models.IntegerField(blank=False, null=False)
+    add_time = models.DateTimeField(blank=False, null=False, auto_now_add=True)
+    updated_by = models.IntegerField(blank=False, null=False)
+    update_time = models.DateTimeField(
+        blank=False, null=False, auto_now=True)
+    
+    class Meta:
+        # This tells Django exactly what to name the table in MySQL
+        db_table = 'donation_given'

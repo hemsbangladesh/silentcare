@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "top-space.html" %}
+
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <th>Sl.</th>
+            <th>ID.</th>
+            <th>Doner Name</th>
+            <th>Email</th>
+            <th>Amount</th>
+            <th>Service cost</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+{{ output | safe }}
+    </tbody>
+</table>
+
+<p>&nbsp;</p>
+
+{% endblock content %}

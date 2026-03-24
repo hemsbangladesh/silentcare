@@ -1,4 +1,5 @@
 {% load static %}
+{% load group_tags %}
 <!doctype html>
 <html lang="en">
   <head>
@@ -55,9 +56,13 @@
             {% if user.is_authenticated %}
               {% if user.is_superuser %}
                 <a href="{% url 'manager:manager-home' %}">Home</a>
+              {% elif request.user|has_group:"Supervisor" %}
+                <a href="{% url 'supervisor:supervisor-home' %}">Home</a>
+              {% elif request.user|has_group:"Doner" %}
+                <a href="{% url 'doner:doner-home' %}">Home</a>
               {% else %}
-                <a href="{% url 'creator-home' %}">Home</a>
-              {% endif %}
+                <a href="#">Home</a>
+            {% endif %}
                   | <a href="{% url 'admin:index' %}" target="_blank">Admin</a> | <a href="{{ request.path }}">Refresh</a> | <a href="javascript:$('#frm_logout').submit();">Log Out</a>
             {% else %}
               <a href="{% url 'home:home' %}">Home</a>
