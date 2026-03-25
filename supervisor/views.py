@@ -157,6 +157,8 @@ class SupervisorViewDonationsPageView(LoginRequiredMixin, SupervisorRequiredMixi
 		output = context['output']
 		counter = 0
 
+		category_rows = Categories.objects.values('id', 'name')
+
 		doners = User.objects.filter(groups__name="Doner").values(
 			"id",
 			"first_name",
@@ -169,8 +171,15 @@ class SupervisorViewDonationsPageView(LoginRequiredMixin, SupervisorRequiredMixi
 			counter = counter + 1
 			output = output + "<tr>"
 			output = output + "<td>{}.</td>".format(counter)
-			output = output + "<td>{}</td>".format(donation.user_id)
 
+			category_name = ""
+			for category_row in category_rows:
+				category_id = category_row["id"]
+				if category_id == donation.category_id:
+					category_name = category_row["name"]
+			output = output + "<td>{}</td>".format(category_name)
+
+			output = output + "<td>{}</td>".format(donation.user_id)
 			doner_name = ""
 			doner_email = ""
 			for doner in doners:
@@ -193,6 +202,21 @@ class SupervisorViewDonationsPageView(LoginRequiredMixin, SupervisorRequiredMixi
 
 class SupervisorAddDonationPageView(LoginRequiredMixin, SupervisorRequiredMixin, TemplateView):
 	template_name = 'supervisor/add-donation.html'
+
+	def get_category(self, selected_category_id=0):
+		output = ""
+		output = '<option value="0">Select a category</option>'
+
+		active_categories = Categories.objects.filter(is_active="Y").order_by("name")
+		for active_category in active_categories:
+			category_id = active_category.id
+			category_name = active_category.name
+			if category_id == selected_category_id:
+				output = output + '<option value="{}" selected>{}</option>'.format(category_id, category_name)
+			else:
+				output = output + '<option value="{}">{}</option>'.format(category_id, category_name)
+
+		return output
 
 	def get_doner_list(self, selected_doner_id=0):
 		output = ""
@@ -236,6 +260,7 @@ class SupervisorAddDonationPageView(LoginRequiredMixin, SupervisorRequiredMixin,
 		context = super().get_context_data(**kwargs)
 		context['title'] = "Add Donation"
 		context['headline'] = "Add Donation"
+		context['category_options'] = self.get_category(0)
 		context['doner_list'] = self.get_doner_list(0)
 		context['payment_method_list'] = self.get_payment_method_list('')
 		context['output'] = ""
@@ -248,6 +273,8 @@ class SupervisorAddDonationPageView(LoginRequiredMixin, SupervisorRequiredMixin,
 	def post(self, request, *args, **kwargs):
 		context = self.get_context_data()
 		output = context['output']
+		category_id = request.POST.get('category_id')
+		category_id = int(category_id) if category_id else 0
 		doner_id = request.POST.get('user_id')
 		doner_id = int(doner_id) if doner_id else 0
 		payment_method = request.POST.get('payment_method')
@@ -259,16 +286,24 @@ class SupervisorAddDonationPageView(LoginRequiredMixin, SupervisorRequiredMixin,
 		notes = request.POST.get('notes')
 		notes = str(notes).strip()
 
+		context['category_id'] = category_id
 		context['user_id'] = doner_id
 		context['payment_method'] = payment_method
 		context['amount'] = amount
 		context['service_cost'] = service_cost
 		context['notes'] = notes
 
+		context['category_options'] = self.get_category(category_id)
 		context['doner_list'] = self.get_doner_list(doner_id)
 		context['payment_method_list'] = self.get_payment_method_list(payment_method)
 
-		if doner_id < 1:
+		if category_id < 1:
+			output = output + '<div>'
+			output = output + '<div class="alert alert-danger" role="alert">'
+			output = output + '<strong>Oops!</strong> A category is not selected.'
+			output = output + '</div>'
+			output = output + '</div>'
+		elif doner_id < 1:
 			output = output + '<div>'
 			output = output + '<div class="alert alert-danger" role="alert">'
 			output = output + '<strong>Oops!</strong> A doner is not selected.'
@@ -304,6 +339,7 @@ class SupervisorAddDonationPageView(LoginRequiredMixin, SupervisorRequiredMixin,
 				# Attempt to create the record
 				DonationReceived.objects.create(
 					user_id=doner_id,
+					category_id=category_id,
 					payment_method=payment_method,
 					amount=amount,
 					service_cost=service_cost,
@@ -312,12 +348,14 @@ class SupervisorAddDonationPageView(LoginRequiredMixin, SupervisorRequiredMixin,
 					updated_by=user_id,
 				)
 
+				context['category_id'] = 0
 				context['user_id'] = 0
 				context['payment_method'] = ""
 				context['amount'] = 0
 				context['service_cost'] = 0
 				context['notes'] = ""
 
+				context['category_options'] = self.get_category(0)
 				context['doner_list'] = self.get_doner_list(0)
 				context['payment_method_list'] = self.get_payment_method_list('')
 
@@ -336,8 +374,193 @@ class SupervisorAddDonationPageView(LoginRequiredMixin, SupervisorRequiredMixin,
 		context['output'] = output
 		return render(request, self.template_name, context)
 
+class SupervisorViewCasesPageView(LoginRequiredMixin, SupervisorRequiredMixin, TemplateView):
+	template_name = 'supervisor/view-cases.html'
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['title'] = "View Cases"
+		context['headline'] = "View Cases"
+		context['output'] = ""
+		return context
+
+	def get(self, request, *args, **kwargs):
+		context = self.get_context_data()
+		output = context['output']
+		counter = 0
+
+		category_rows = Categories.objects.values('id', 'name')
+
+		beneficiary_list = DonationBeneficiaries.objects.filter(is_active="Y").values(
+			"id",
+			"beneficiary_name",
+		)
+
+		donation_case_list = CaseRecords.objects.filter(is_active="Y").order_by("-add_time")
+		for donation_case in donation_case_list:
+			counter = counter + 1
+			output = output + "<tr>"
+			output = output + "<td>{}.</td>".format(counter)
+			output = output + "<td>{}</td>".format(donation_case.id)
+
+			category_name = ""
+			for category_row in category_rows:
+				category_id = category_row["id"]
+				if category_id == donation_case.category_id:
+					category_name = category_row["name"]
+			output = output + "<td>{}</td>".format(category_name)
+
+			output = output + "<td>{}</td>".format(donation_case.beneficiary_id)
+			beneficiary_list = DonationBeneficiaries.objects.values('id', 'beneficiary_name').order_by("-add_time")
+			beneficiary_name = ""
+			for beneficiary in beneficiary_list:
+				beneficiary_id = beneficiary["id"]
+
+				if donation_case.beneficiary_id == beneficiary_id:
+					beneficiary_name = beneficiary["beneficiary_name"]
+
+			output = output + "<td>{}</td>".format(beneficiary_name)
+			output = output + "<td>{}</td>".format(donation_case.amount)
+			output = output + "<td>{}</td>".format(donation_case.title)
+			output = output + "<td>{}</td>".format(donation_case.description)
+			output = output + "</tr>"
+		context['output'] = output
+		return render(request, self.template_name, context)
+
+class SupervisorAddCasePageView(LoginRequiredMixin, SupervisorRequiredMixin, TemplateView):
+	template_name = 'supervisor/add-case.html'
+
+	def get_beneficiary_list(self, selected_beneficiary_id=0):
+		output = ""
+		output = '<option value="0">Select a beneficiary</option>'
+
+		active_beneficiaries = DonationBeneficiaries.objects.filter(is_active="Y").order_by("beneficiary_name")
+		for active_beneficiary in active_beneficiaries:
+			beneficiary_id = active_beneficiary.id
+			beneficiary_name = active_beneficiary.beneficiary_name
+			if beneficiary_id == selected_beneficiary_id:
+				output = output + '<option value="{}" selected>{} - {}</option>'.format(beneficiary_id, beneficiary_id, beneficiary_name)
+			else:
+				output = output + '<option value="{}">{} - {}</option>'.format(beneficiary_id, beneficiary_id, beneficiary_name)
+
+		return output
+
+	def get_category_list(self, selected_category_id=0):
+		output = ""
+		output = '<option value="0">Select a category</option>'
+
+		active_categories = Categories.objects.filter(is_active="Y").order_by("name")
+		for active_category in active_categories:
+			category_id = active_category.id
+			category_name = active_category.name
+			if category_id == selected_category_id:
+				output = output + '<option value="{}" selected>{}</option>'.format(category_id, category_name)
+			else:
+				output = output + '<option value="{}">{}</option>'.format(category_id, category_name)
+
+		return output
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['title'] = "Add Case"
+		context['headline'] = "Add Case"
+		context['beneficiary_list'] = self.get_beneficiary_list(0)
+		context['category_options'] = self.get_category_list(0)
+		context['output'] = ""
+		return context
+
+	def get(self, request, *args, **kwargs):
+		context = self.get_context_data()
+		return render(request, self.template_name, context)
+
+	def post(self, request, *args, **kwargs):
+		context = self.get_context_data()
+		output = context['output']
+		beneficiary_id = request.POST.get('beneficiary_id')
+		beneficiary_id = int(beneficiary_id) if beneficiary_id else 0
+		category_id = request.POST.get('category_id')
+		category_id = int(category_id) if category_id else 0
+		amount = request.POST.get('amount')
+		amount = float(amount) if amount else 0
+		case_title = request.POST.get('case_title')
+		case_title = str(case_title).strip()
+		description = request.POST.get('description')
+		description = str(description).strip()
+
+		context['beneficiary_id'] = beneficiary_id
+		context['category_id'] = category_id
+		context['amount'] = amount
+		context['case_title'] = case_title
+		context['description'] = description
+
+		context['beneficiary_list'] = self.get_beneficiary_list(beneficiary_id)
+		context['category_options'] = self.get_category_list(category_id)
+
+		if beneficiary_id < 1:
+			output = output + '<div>'
+			output = output + '<div class="alert alert-danger" role="alert">'
+			output = output + '<strong>Oops!</strong> A beneficiary is not selected.'
+			output = output + '</div>'
+			output = output + '</div>'
+		elif category_id < 1:
+			output = output + '<div>'
+			output = output + '<div class="alert alert-danger" role="alert">'
+			output = output + '<strong>Oops!</strong> A category is not selected.'
+			output = output + '</div>'
+			output = output + '</div>'
+		elif amount <= 0:
+			output = output + '<div>'
+			output = output + '<div class="alert alert-danger" role="alert">'
+			output = output + '<strong>Oops!</strong> The donation amount ({}) is invalid.'.format(amount)
+			output = output + '</div>'
+			output = output + '</div>'
+		elif not case_title:
+			output = output + '<div>'
+			output = output + '<div class="alert alert-danger" role="alert">'
+			output = output + '<strong>Oops!</strong> The title is empty.'
+			output = output + '</div>'
+			output = output + '</div>'
+		else:
+			try:
+				user_id = request.user.id
+				# Attempt to create the record
+				CaseRecords.objects.create(
+					beneficiary_id=beneficiary_id,
+					category_id=category_id,
+					sub_category_id=0,
+					amount=amount,
+					title=case_title,
+					description=description,
+					added_by=user_id,
+					updated_by=user_id,
+				)
+
+				context['beneficiary_id'] = 0
+				context['category_id'] = 0
+				context['amount'] = 0
+				context['case_title'] = ""
+				context['description'] = ""
+
+				context['beneficiary_list'] = self.get_beneficiary_list(0)
+				context['category_options'] = self.get_category_list(0)
+
+				output = output + '<div>'
+				output = output + '<div class="alert alert-success" role="alert">'
+				output = output + '<strong>Good news!</strong> Successfully created new case for donation: {}.'.format(amount)
+				output = output + '</div>'
+				output = output + '</div>'
+			except Exception as e:
+				output = output + '<div>'
+				output = output + '<div class="alert alert-danger" role="alert">'
+				output = output + '<strong>Oops!</strong> Donation could not be created.'
+				output = output + '</div>'
+				output = output + '</div>'
+
+		context['output'] = output
+		return render(request, self.template_name, context)
+
 class SupervisorDeliveredDonationsPageView(LoginRequiredMixin, SupervisorRequiredMixin, TemplateView):
-	template_name = 'supervisor/home.html'
+	template_name = 'supervisor/delivered-donations.html'
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
@@ -348,15 +571,99 @@ class SupervisorDeliveredDonationsPageView(LoginRequiredMixin, SupervisorRequire
 
 	def get(self, request, *args, **kwargs):
 		context = self.get_context_data()
+		output = context['output']
+		counter = 0
+
+		donation_case_list = CaseRecords.objects.filter(is_active="Y").order_by("-add_time")
+		category_rows = Categories.objects.values('id', 'name')
+
+		donation_list = DonationGiven.objects.filter(is_active="Y").order_by("-add_time")
+		for donation in donation_list:
+			counter = counter + 1
+			output = output + "<tr>"
+			output = output + "<td>{}.</td>".format(counter)
+			output = output + "<td>{}</td>".format(donation.case_id)
+
+			case_title = ""
+			category_name = ""
+			for donation_case in donation_case_list:
+				if donation_case.id == donation.case_id:
+					case_title= donation_case.title
+
+				for category_row in category_rows:
+					category_id = category_row["id"]
+					if category_id == donation_case.category_id:
+						category_name = category_row["name"]
+
+			output = output + "<td>{}</td>".format(case_title)
+
+			output = output + "<td>{}</td>".format(category_name)
+
+			# output = output + "<td>{}</td>".format(donation.user_id)
+			# doner_name = ""
+			# doner_email = ""
+			# for doner in doners:
+			# 	doner_id = doner["id"]
+
+			# 	if donation.user_id == doner_id:
+			# 		first_name = doner["first_name"]
+			# 		last_name = doner["last_name"]
+			# 		doner_email = doner["email"]
+			# 		doner_name = "{} {}".format(first_name, last_name)
+
+			# output = output + "<td>{}</td>".format(doner_name)
+			# output = output + "<td>{}</td>".format(doner_email)
+			output = output + "<td>{}</td>".format(donation.amount)
+			output = output + "<td>{}</td>".format(donation.notes)
+			output = output + "</tr>"
+		context['output'] = output
 		return render(request, self.template_name, context)
 
 class SupervisorDeliverDonationPageView(LoginRequiredMixin, SupervisorRequiredMixin, TemplateView):
-	template_name = 'supervisor/home.html'
+	template_name = 'supervisor/deliver-donation.html'
+
+	def get_case_list(self, selected_case_id=0):
+		output = ""
+		output = '<option value="0">Select a case</option>'
+
+		# category_rows = Categories.objects.values('id', 'name')
+
+		beneficiary_list = DonationBeneficiaries.objects.values(
+			"id",
+			"beneficiary_name",
+		)
+
+		donation_case_list = CaseRecords.objects.all()
+
+		beneficiary_case_list = CaseRecords.objects.filter(is_active="Y").order_by("-add_time")
+		for beneficiary_case in beneficiary_case_list:
+			case_id = beneficiary_case.id
+			beneficiary_id = beneficiary_case.beneficiary_id
+			category_id = beneficiary_case.category_id
+			amount = beneficiary_case.amount
+
+			donation_title = ""
+			for donation_case in donation_case_list:
+				if donation_case.id == case_id:
+					donation_title = donation_case.title
+
+			beneficiary_name = ""
+			for beneficiary in beneficiary_list:
+				if beneficiary["id"] == beneficiary_id:
+					beneficiary_name = beneficiary["beneficiary_name"]
+
+			if case_id == selected_case_id:
+				output = output + '<option value="{}" selected>Case # {} - {} - {} - {} BDT</option>'.format(case_id, case_id, donation_title, beneficiary_name, amount)
+			else:
+				output = output + '<option value="{}">Case # {} - {} - {} - {} BDT</option>'.format(case_id, case_id, donation_title, beneficiary_name, amount)
+
+		return output
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		context['title'] = "Deliver Donation"
 		context['headline'] = "Deliver Donation"
+		context['case_list'] = self.get_case_list(0)
 		context['output'] = ""
 		return context
 
@@ -364,3 +671,63 @@ class SupervisorDeliverDonationPageView(LoginRequiredMixin, SupervisorRequiredMi
 		context = self.get_context_data()
 		return render(request, self.template_name, context)
 
+	def post(self, request, *args, **kwargs):
+		context = self.get_context_data()
+		output = context['output']
+		case_id = request.POST.get('case_id')
+		case_id = int(case_id) if case_id else 0
+		amount = request.POST.get('amount')
+		amount = float(amount) if amount else 0
+		notes = request.POST.get('notes')
+		notes = str(notes).strip()
+
+		context['case_id'] = case_id
+		context['amount'] = amount
+		context['notes'] = notes
+
+		context['case_list'] = self.get_case_list(case_id)
+
+		if case_id < 1:
+			output = output + '<div>'
+			output = output + '<div class="alert alert-danger" role="alert">'
+			output = output + '<strong>Oops!</strong> A case is not selected.'
+			output = output + '</div>'
+			output = output + '</div>'
+		elif amount <= 0:
+			output = output + '<div>'
+			output = output + '<div class="alert alert-danger" role="alert">'
+			output = output + '<strong>Oops!</strong> The donation amount ({}) is invalid.'.format(amount)
+			output = output + '</div>'
+			output = output + '</div>'
+		else:
+			try:
+				user_id = request.user.id
+				# Attempt to create the record
+				DonationGiven.objects.create(
+					case_id=case_id,
+					amount=amount,
+					notes=notes,
+					added_by=user_id,
+					updated_by=user_id,
+				)
+
+				context['case_id'] = 0
+				context['amount'] = 0
+				context['notes'] = ""
+
+				context['case_list'] = self.get_case_list(0)
+
+				output = output + '<div>'
+				output = output + '<div class="alert alert-success" role="alert">'
+				output = output + '<strong>Good news!</strong> Successfully created new donation grant: {}.'.format(amount)
+				output = output + '</div>'
+				output = output + '</div>'
+			except Exception as e:
+				output = output + '<div>'
+				output = output + '<div class="alert alert-danger" role="alert">'
+				output = output + '<strong>Oops!</strong> Donation grant could not be created.'
+				output = output + '</div>'
+				output = output + '</div>'
+
+		context['output'] = output
+		return render(request, self.template_name, context)

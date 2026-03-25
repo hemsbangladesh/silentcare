@@ -9,6 +9,12 @@
 {% csrf_token %}
 
 <div class="input-group mb-3">
+<select name="category_id" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+  {{ category_options | safe }}
+</select>
+</div>
+
+<div class="input-group mb-3">
 <select name="user_id" class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
   {{ doner_list | safe }}
 </select>

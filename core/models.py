@@ -79,6 +79,7 @@ class DonationBeneficiaries(models.Model):
 
 class DonationReceived(models.Model):
     user_id = models.IntegerField(blank=False, null=False)
+    category_id = models.IntegerField(blank=False, null=False, default=0)
     payment_method = models.CharField(max_length=25, blank=False, null=False)
     amount = models.FloatField(default=0)
     service_cost = models.FloatField(default=0)
@@ -96,8 +97,10 @@ class DonationReceived(models.Model):
         db_table = 'donation_received'
 
 class CaseRecords(models.Model):
+    beneficiary_id = models.IntegerField(blank=False, null=False, default=0)
     category_id = models.IntegerField(blank=False, null=False)
     sub_category_id = models.IntegerField(blank=False, null=False)
+    amount = models.FloatField(default=0)
     title = models.CharField(max_length=255, blank=False, null=False)
     description = models.TextField(blank=True, null=True)
     is_active = models.CharField(
@@ -137,6 +140,7 @@ class CaseRecords(models.Model):
 class DonationGiven(models.Model):
     case_id = models.IntegerField(blank=False, null=False)
     amount = models.FloatField(default=0)
+    notes = models.CharField(max_length=255, blank=False, null=False, default="")
     is_active = models.CharField(
         max_length=1, blank=False, null=False, default="Y")
     added_by = models.IntegerField(blank=False, null=False)

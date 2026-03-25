@@ -11,6 +11,8 @@ urlpatterns = [
     path('supervisor/add-beneficiary', SupervisorAddBeneficiaryPageView.as_view(), name='supervisor-add-beneficiary'),
     path('supervisor/view-donations', SupervisorViewDonationsPageView.as_view(), name='supervisor-view-donations'),
     path('supervisor/add-donation', SupervisorAddDonationPageView.as_view(), name='supervisor-add-donation'),
+    path('supervisor/view-cases', SupervisorViewCasesPageView.as_view(), name='supervisor-view-cases'),
+    path('supervisor/add-case', SupervisorAddCasePageView.as_view(), name='supervisor-add-case'),
     path('supervisor/delivered-donations', SupervisorDeliveredDonationsPageView.as_view(), name='supervisor-delivered-donations'),
     path('supervisor/deliver-donation', SupervisorDeliverDonationPageView.as_view(), name='supervisor-deliver-donation'),
 ]
