@@ -399,9 +399,12 @@ class SupervisorViewCasesPageView(LoginRequiredMixin, SupervisorRequiredMixin, T
 		donation_case_list = CaseRecords.objects.filter(is_active="Y").order_by("-add_time")
 		for donation_case in donation_case_list:
 			counter = counter + 1
+			case_id = donation_case.id
 			output = output + "<tr>"
 			output = output + "<td>{}.</td>".format(counter)
-			output = output + "<td>{}</td>".format(donation_case.id)
+			output = output + "<td>{}</td>".format(case_id)
+			url = reverse('supervisor:supervisor-case-details', kwargs={'case_id': case_id})
+			output = output + '<td><a href="{}" target="_blank">{}</a></td>'.format(url, donation_case.title)
 
 			category_name = ""
 			for category_row in category_rows:
@@ -421,9 +424,95 @@ class SupervisorViewCasesPageView(LoginRequiredMixin, SupervisorRequiredMixin, T
 
 			output = output + "<td>{}</td>".format(beneficiary_name)
 			output = output + "<td>{}</td>".format(donation_case.amount)
-			output = output + "<td>{}</td>".format(donation_case.title)
 			output = output + "<td>{}</td>".format(donation_case.description)
 			output = output + "</tr>"
+		context['output'] = output
+		return render(request, self.template_name, context)
+
+class SupervisorCaseDetailsPageView(LoginRequiredMixin, SupervisorRequiredMixin, TemplateView):
+	template_name = 'supervisor/case-details.html'
+
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context['title'] = "Case Details"
+		context['headline'] = "Case Details"
+		context['output'] = ""
+		context['facebook_embed_code'] = ""
+		return context
+
+	def get(self, request, *args, **kwargs):
+		context = self.get_context_data()
+		output = context['output']
+
+		title = ""
+		amount = 0
+		category_name = ""
+		beneficiary_id = 0
+		beneficiary_name = ""
+		description = ""
+		facebook_embed_code = ""
+		case_id = self.kwargs.get('case_id')
+		case = CaseRecords.objects.filter(id=case_id).first()
+		if case:
+			category_rows = Categories.objects.values('id', 'name')
+
+			beneficiary_list = DonationBeneficiaries.objects.filter(is_active="Y").values(
+				"id",
+				"beneficiary_name",
+			)
+
+			title = case.title
+			amount = case.amount
+			category_id = case.category_id
+
+			category_name = ""
+			for category_row in category_rows:
+				category_id = category_row["id"]
+				if category_id == case.category_id:
+					category_name = category_row["name"]
+
+			beneficiary_id = case.beneficiary_id
+
+			for beneficiary in beneficiary_list:
+				beneficiary_id = beneficiary["id"]
+				if case.beneficiary_id == beneficiary_id:
+					beneficiary_name = beneficiary["beneficiary_name"]
+
+			description = case.description
+			facebook_embed_code = case.facebook_embed_code
+
+		context['facebook_embed_code'] = facebook_embed_code
+
+
+		output = output + "<tr>"
+		output = output + "<td>Case ID</td>"
+		output = output + "<td>{}</td>".format(case_id)
+		output = output + "</tr>"
+		output = output + "<tr>"
+		output = output + "<td>Title</td>"
+		output = output + "<td>{}</td>".format(title)
+		output = output + "</tr>"
+		output = output + "<tr>"
+		output = output + "<td>Amount</td>"
+		output = output + "<td>{} BDT</td>".format(amount)
+		output = output + "</tr>"
+		output = output + "<tr>"
+		output = output + "<td>Category</td>"
+		output = output + "<td>{}</td>".format(category_name)
+		output = output + "</tr>"
+		output = output + "<tr>"
+		output = output + "<td>Beneficiary ID</td>"
+		output = output + "<td>{}</td>".format(beneficiary_id)
+		output = output + "</tr>"
+		output = output + "<tr>"
+		output = output + "<td>Beneficiary Name</td>"
+		output = output + "<td>{}</td>".format(beneficiary_name)
+		output = output + "</tr>"
+		output = output + "<tr>"
+		output = output + "<td>Description</td>"
+		output = output + "<td>{}</td>".format(description)
+		output = output + "</tr>"
+
 		context['output'] = output
 		return render(request, self.template_name, context)
 
@@ -486,12 +575,15 @@ class SupervisorAddCasePageView(LoginRequiredMixin, SupervisorRequiredMixin, Tem
 		case_title = str(case_title).strip()
 		description = request.POST.get('description')
 		description = str(description).strip()
+		facebook_embed_code = request.POST.get('facebook_embed_code')
+		facebook_embed_code = str(facebook_embed_code).strip()
 
 		context['beneficiary_id'] = beneficiary_id
 		context['category_id'] = category_id
 		context['amount'] = amount
 		context['case_title'] = case_title
 		context['description'] = description
+		context['facebook_embed_code'] = facebook_embed_code
 
 		context['beneficiary_list'] = self.get_beneficiary_list(beneficiary_id)
 		context['category_options'] = self.get_category_list(category_id)
@@ -520,6 +612,12 @@ class SupervisorAddCasePageView(LoginRequiredMixin, SupervisorRequiredMixin, Tem
 			output = output + '<strong>Oops!</strong> The title is empty.'
 			output = output + '</div>'
 			output = output + '</div>'
+		elif not facebook_embed_code:
+			output = output + '<div>'
+			output = output + '<div class="alert alert-danger" role="alert">'
+			output = output + '<strong>Oops!</strong> The facebook embed code is empty.'
+			output = output + '</div>'
+			output = output + '</div>'
 		else:
 			try:
 				user_id = request.user.id
@@ -531,6 +629,7 @@ class SupervisorAddCasePageView(LoginRequiredMixin, SupervisorRequiredMixin, Tem
 					amount=amount,
 					title=case_title,
 					description=description,
+					facebook_embed_code=facebook_embed_code,
 					added_by=user_id,
 					updated_by=user_id,
 				)
@@ -540,6 +639,7 @@ class SupervisorAddCasePageView(LoginRequiredMixin, SupervisorRequiredMixin, Tem
 				context['amount'] = 0
 				context['case_title'] = ""
 				context['description'] = ""
+				context['facebook_embed_code'] = ""
 
 				context['beneficiary_list'] = self.get_beneficiary_list(0)
 				context['category_options'] = self.get_category_list(0)

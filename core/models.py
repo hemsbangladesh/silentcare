@@ -103,6 +103,7 @@ class CaseRecords(models.Model):
     amount = models.FloatField(default=0)
     title = models.CharField(max_length=255, blank=False, null=False)
     description = models.TextField(blank=True, null=True)
+    facebook_embed_code = models.TextField(blank=True, null=True)
     is_active = models.CharField(
         max_length=1, blank=False, null=False, default="Y")
     added_by = models.IntegerField(blank=False, null=False)

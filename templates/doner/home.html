@@ -1,1 +1,9 @@
-<p>Hello Doner</p>
+{% extends "base.html" %}
+
+{% block content %}
+
+<p>1. <a href="{% url 'doner:doner-view-cases' %}">Veiw cases</a></p>
+
+<p>&nbsp;</p>
+
+{% endblock content %}

@@ -7,4 +7,6 @@ app_name = "doner"  # optional but recommended
 
 urlpatterns = [
 	path('doner/home', DonerHomePageView.as_view(), name='doner-home'),
+    path('doner/view-cases', DonerViewCasesPageView.as_view(), name='doner-view-cases'),
+    path('doner/case-details/<int:case_id>', DonerCaseDetailsPageView.as_view(), name='doner-case-details'),
 ]
